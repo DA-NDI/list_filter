@@ -1,38 +1,46 @@
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct	s_list {
 	int			i;
 	struct		s_list *next;
 } 				t_list;
 
+int		odd(int a)
+{
+	return (a % 2 == 0) ? 0 : 1;
+}
 
-t_list *od__number(t_list *list, UnaryPredicate )
+int		even(int a)
+{
+	return (a % 2 == 0) ? 1 : 0;
+}
+
+t_list *filter(t_list *list, int (*pred)())
 {
 	t_list *new_list = NULL;
 	t_list *head = NULL;
-	t_list *current = NULL;
+	t_list *previous_node = NULL;
 
 	if (list == NULL)
 		return NULL;
-	head = new_list;
 	while (list)
 	{
-		if ((list->i % 2) == 0)
+		if (pred(list->i))
 		{
-			if (current)
+			if (previous_node)
 			{
 				new_list = (t_list*)malloc(sizeof(t_list));
-				new_list->next = NULL;
 				new_list->i = list->i;
-				current->next = new_list;
-				current = current->next;
+				new_list->next = NULL;
+				previous_node->next = new_list;
+				previous_node = previous_node->next;
 			}
 			else
 			{
 				new_list = (t_list*)malloc(sizeof(t_list));
 				new_list->i = list->i;
-				current = new_list;
+				previous_node = new_list;
 				head = new_list;
 				new_list->next = NULL;
 			}
@@ -42,7 +50,7 @@ t_list *od__number(t_list *list, UnaryPredicate )
 	return head;
 }
 
-void ft_print_nodes(t_list *list)
+void print_nodes(t_list *list)
 {
 	if (!list)
 	{
@@ -73,14 +81,19 @@ int main (void)
 	one.i = 1;
 	two.i = 2;
 	three.i = 3;
-
 	nol.next = &one;
 	one.next = &two;
 	two.next = &three;
 	three.next = NULL;
 
-	ft_print_nodes(&nol);
-	new_list = od__number(&nol);
-	ft_print_nodes(new_list);
+	print_nodes(&nol);
+	new_list = filter(&nol, &odd);
+	print_nodes(new_list);
+	free(new_list);
+	new_list = filter(&nol, &even);
+	print_nodes(new_list);
+	free(new_list);
+	new_list = filter(three.next, &odd);
+	print_nodes(new_list);
 	return (0);
 }
